@@ -2,6 +2,7 @@ package brushbook
 
 import (
 	"fmt"
+	"math"
 	"testing"
 )
 
@@ -101,4 +102,26 @@ func TestSpiralMatrix(t *testing.T) {
 	}
 	res := SpiralMatrix2(matrix)
 	fmt.Println(res)
+}
+
+func rangeBitwiseAnd(left int, right int) int {
+	res := 0
+	// 0 <= left <= right <= 2^31 - 1
+	// 总共31个1,从高位开始取
+	for i := 30; i >= 0; i-- {
+		if ((left >> i) & 1) != ((right >> i) & 1) {
+			break
+		}
+
+		if ((left >> i) & 1) == 1 {
+			res += 1 << i
+		}
+	}
+	return res
+}
+
+func TestBitwiseAndRange(t *testing.T) {
+	println(rangeBitwiseAnd(5, 7))             // == 4)
+	println(rangeBitwiseAnd(0, 0))             // == 0)
+	println(rangeBitwiseAnd(1, math.MaxInt32)) // == 0)
 }

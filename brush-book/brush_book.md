@@ -53,3 +53,25 @@ func SpiralMatrix(matrix [][]int) []int {
 	return res
 }
 ```
+
+## 
+
+![2.png](https://s2.loli.net/2023/06/20/bADp8oI6HtmL7zN.png)
+
+```go
+func rangeBitwiseAnd(left int, right int) int {
+	res := 0
+	// 0 <= left <= right <= 2^31 - 1
+	// 总共31个1,从高位开始取
+	for i := 30; i >= 0; i-- {
+		if ((left >> i) & 1) != ((right >> i) & 1) {
+			break
+		}
+
+		if ((left >> i) & 1) == 1 {
+			res += 1 << i
+		}
+	}
+	return res
+}
+```
