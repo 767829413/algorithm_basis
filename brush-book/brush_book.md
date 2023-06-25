@@ -54,7 +54,7 @@ func SpiralMatrix(matrix [][]int) []int {
 }
 ```
 
-## 
+## 按位与
 
 ![2.png](https://s2.loli.net/2023/06/20/bADp8oI6HtmL7zN.png)
 
@@ -73,5 +73,82 @@ func rangeBitwiseAnd(left int, right int) int {
 		}
 	}
 	return res
+}
+```
+
+## 全排列
+
+![1.png](https://s2.loli.net/2023/06/25/vnq85Sb6B4pLXIo.png)
+
+```go
+func permute(nums []int) [][]int {
+	var result [][]int
+	var tmp = []int{}
+	var has = make([]int, len(nums))
+	var l = len(nums)
+	if l == 0 {
+		return result
+	}
+	var fullyAligned func(nums []int)
+	fullyAligned = func(nums []int) {
+		if len(tmp) == l {
+			tmpCopy := make([]int, len(tmp))
+			copy(tmpCopy, tmp)
+			result = append(result, tmpCopy)
+			return
+		}
+		for i := 0; i < l; i++ {
+			if has[i] == 0 {
+				tmp = append(tmp, nums[i])
+				has[i] = 1
+				fullyAligned(nums)
+				tmp = tmp[:len(tmp)-1]
+				has[i] = 0
+			}
+		}
+	}
+	fullyAligned(nums)
+	return result
+}
+```
+
+## 全排列 II
+
+![2.png](https://s2.loli.net/2023/06/25/PE6iUVOBQ4ZTNnw.png)
+
+```go
+func permuteUnique(nums []int) [][]int {
+	sort.Ints(nums)
+	var result [][]int
+	var tmp = []int{}
+	var has = make([]int, len(nums))
+	var l = len(nums)
+	if l == 0 {
+		return result
+	}
+	var fullyAligned func(deep int)
+	fullyAligned = func(deep int) {
+		if l == deep {
+			tmpCopy := make([]int, len(tmp))
+			copy(tmpCopy, tmp)
+			result = append(result, tmpCopy)
+			return
+		}
+		for i := 0; i < l; i++ {
+			if i >= 1 && has[i-1] == 0 && nums[i-1] == nums[i] {
+				continue
+			}
+			if has[i] != 0 {
+				continue
+			}
+			tmp = append(tmp, nums[i])
+			has[i] = 1
+			fullyAligned(deep + 1)
+			tmp = tmp[:len(tmp)-1]
+			has[i] = 0
+		}
+	}
+	fullyAligned(0)
+	return result
 }
 ```

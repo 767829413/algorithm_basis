@@ -272,4 +272,73 @@ func permuteUnique(nums []int) [][]int {
 }
 ```
 
-## 二分
+## 整数二分
+
+`定义`
+
+ **对于区间[a，b]上连续不断且f(a) • f (b) <0 的函数y=f (x) ，通过不断地把函数f(x)的零点所在的区间一分为二，使区间的两个端点逐步逼近零点，进而得到零点近似值的方法叫二分法。**
+
+`二分模板`
+
+```go
+// 第一个模板在区间[L,R],被切割成为[L，MID] 和 [MID + 1，R]
+func binary_search_1(left, right int) int {
+  for left < right {
+    mid := (left + right) >> 1
+    if check(mid) {
+      right = mid
+    }else {
+      left = mid + 1
+    }
+  }
+  return left
+}
+
+// 第二个模板在区间[L,R]，被切割成[L，MID - 1] 和 [MID，R]
+func binary_search_1(left, right int) int {
+  for left < right {
+    mid := (left + right + 1) >> 1
+    if check(mid) {
+      left = mid
+    } else {
+      right = mid - 1
+    }
+  }
+  return left
+}
+```
+
+`二分本质`
+ 
+ 二分的本质其实并不是单调性，如果某个数组存在单调性的话，是一定可以用二分的，但是用二分的题目，不一定非要具有单调性。 
+
+ 我们来看这么一个区间:
+  
+  ![3.png](https://s2.loli.net/2023/06/25/CrJvRbOlHfBaS1D.png)
+
+ **我们有这么个区间，并且我们在区间定义了某种性质。使得这种性质在右半边区间是满足的，在左半边区间是不满足的。**
+ 
+ **假如说我们可以找到一个这样的性质，能把整个区间一分为二，然后一块区间满足某种性质，一块不满足，那么二分就可以寻找这个性质的边界。我们既可以找到红色的这个边界也可以找到蓝色的这个边界。**
+ 
+* 我们先来看这个红色的边界点(如何找红色边界点):
+
+   1. 先找一个中间值: mid = (left + right + 1) / 2
+   2. 然后检查一下这个 mid 是否满足红色区间的这个性质
+   3. 如果成立: 也就是说满足红色区间的性质，那么我们想找红色边界点的话，我们就可以把 left 更新成 mid, 也就是把 [left, right] 更新成 [mid, right]
+      ![4.png](https://s2.loli.net/2023/06/25/jdKygTJ2RkS5cGl.png)
+   4. 如果不成立: 那么就是 mid 并不满足红色区间，那么mid就在蓝色区间，那么我们要找红色的边界，right 就可以更新成 mid - 1。mid 一定不是边界点。那么 right 更新成 mid - 1 也就是区间变成了 [left, mid - 1]
+      ![5.png](https://s2.loli.net/2023/06/25/5Jr2lQPSkdGYWBm.png)
+
+   ```text
+   为什么要加1呢? 是为了防止发生死循环!
+   打个比方，我们知道 java c++ python 里除法是向下取整，那么假如说我们当前 left = right - 1 的话，那么 mid = (left + right + 1) / 2 = left ,等于 left，然后我们在检查 mid 恰好满足红色区间的时候，left = mid,此时 mid = left,那么就等于没有更改区间，那么就会一直在 left 到 right 这个区间里，发生死循环。所以要加上1，跳出次循环。
+   ```
+
+* 我们再来看这个蓝色的边界点(如何找蓝色边界点):
+
+   1. 先找一个中间值: mid = (left + right) / 2
+   2. 然后检查一下这个 mid 是否满足蓝色区间的这个性质
+   3. 如果成立: 也就是说满足蓝色区间的性质，那么我们想找蓝色边界点的话，我们就可以把 right 更新成 mid, 也就是把 [left, right] 更新成 [left, mid]
+      ![5.png](https://s2.loli.net/2023/06/25/5Jr2lQPSkdGYWBm.png)
+   4. 如果不成立: 那么就是 mid 并不满足蓝色区间，那么 mid 就在红色区间，那么我们要找蓝色的边界，left 就可以更新成 mid + 1。mid 一定不是边界点。那么区间变成了 [mid + 1, right]
+      ![4.png](https://s2.loli.net/2023/06/25/jdKygTJ2RkS5cGl.png)
