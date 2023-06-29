@@ -125,3 +125,54 @@ func TestBitwiseAndRange(t *testing.T) {
 	println(rangeBitwiseAnd(0, 0))             // == 0)
 	println(rangeBitwiseAnd(1, math.MaxInt32)) // == 0)
 }
+
+// 采用单调栈
+func trap1(height []int) int {
+	stack := []int{}
+	res := 0
+	for i := 0; i < len(height); i++ {
+		last := 0
+		for len(stack) != 0 && height[stack[len(stack)-1]] <= height[i] {
+			res += (height[stack[len(stack)-1]] - last) * (i - stack[len(stack)-1] - 1)
+			last = height[stack[len(stack)-1]]
+			stack = stack[:len(stack)-1]
+		}
+
+		if len(stack) != 0 {
+			res += (height[i] - last) * (i - stack[len(stack)-1] - 1)
+		}
+
+		stack = append(stack, i)
+	}
+	return res
+}
+
+// 采用双指针
+func trap(height []int) int {
+	if len(height) <= 2 {
+		return 0
+	}
+	left, right, lm, rm, res := 0, len(height)-1, 0, 0, 0
+
+	for left < right {
+		if height[left] > height[right] {
+			if rm > height[right] {
+				res += rm - height[right]
+			} else {
+				rm = height[right]
+			}
+			right--
+		} else {
+			if lm > height[left] {
+				res += lm - height[left]
+			} else {
+				lm = height[left]
+			}
+			left++
+		}
+	}
+	return res
+}
+func TestTrap(t *testing.T) {
+	println(trap1([]int{0,1,0,2,1,0,1,3,2,1,2,1}) == 6)
+}
