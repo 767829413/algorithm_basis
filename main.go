@@ -8,19 +8,66 @@ import (
 var reader = bufio.NewReader(os.Stdin)
 
 func main() {
+	// q := NewQueue()
+	// q.Push(1)
+	// q.Push(2)
+	// println(q.Pop())
+	// println(q.Pop())
+
+	s := Constructor()
+	s.Push(1)
+	s.Push(2)
+	println(s.Top())
+	println(s.Pop())
+	println(s.Empty())
 
 }
 
-func maxSlidingWindow(nums []int, k int) []int {
-	q := NewQueue()
-	res := []int{}
-	for i, idx := 0, 0; i < len(nums); i++ {
-		if !q.IsEmpty() && i-k+1 > q.PeekFrist() {
-			q.RemoveFrist()
-		}
-		
+type MyStack struct {
+	data *Queue
+	tmp  *Queue
+}
+
+func Constructor() MyStack {
+	return MyStack{
+		data: NewQueue(),
+		tmp:  NewQueue(),
 	}
-	return res
+}
+
+func (this *MyStack) Push(x int) {
+	this.data.Push(x)
+}
+
+func (this *MyStack) Pop() int {
+	var v = -1
+	for !this.data.IsEmpty() {
+		v = this.data.Pop()
+		this.tmp.Push(v)
+	}
+	for !this.tmp.IsEmpty() {
+		t := this.tmp.Pop()
+		if v != t {
+			this.data.Push(t)
+		}
+	}
+	return v
+}
+
+func (this *MyStack) Top() int {
+	var v = -1
+	for !this.data.IsEmpty() {
+		v = this.data.Pop()
+		this.tmp.Push(v)
+	}
+	for !this.tmp.IsEmpty() {
+		this.data.Push(this.tmp.Pop())
+	}
+	return v
+}
+
+func (this *MyStack) Empty() bool {
+	return this.data.IsEmpty()
 }
 
 type Queue struct {
@@ -28,50 +75,27 @@ type Queue struct {
 }
 
 // 初始化队列
-func NewQueue() Queue {
-	return Queue{
+func NewQueue() *Queue {
+	return &Queue{
 		data: []int{},
 	}
 }
 
-// 从左边入队
-func (q *Queue) PushFrist(x int) {
+// 入队
+func (q *Queue) Push(x int) {
 	q.data = append([]int{x}, q.data...)
 }
 
-// 从右边入队
-func (q *Queue) PushTail(x int) {
-	q.data = append(q.data, x)
-}
-
-// 获取队头元素
-func (q *Queue) PeekFrist() int {
-	if q.IsEmpty() {
-		return -1
-	}
-	return q.data[0]
-}
-
-// 从队头弹出元素
-func (q *Queue) RemoveFrist() int {
-	if q.IsEmpty() {
-		return -1
-	}
-	v := q.data[0]
-	q.data = q.data[1:]
-	return v
-}
-
-// 获取队头元素
-func (q *Queue) PeekTail() int {
+// 从队列中取出队头元素
+func (q *Queue) Front() int {
 	if q.IsEmpty() {
 		return -1
 	}
 	return q.data[len(q.data)-1]
 }
 
-// 从队尾弹出元素
-func (q *Queue) RemoveTail() int {
+// 从队列中弹出队头元素
+func (q *Queue) Pop() int {
 	if q.IsEmpty() {
 		return -1
 	}
