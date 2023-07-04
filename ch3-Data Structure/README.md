@@ -819,3 +819,299 @@ func (q *Queue) IsEmpty() bool { return len(q.data) == 0 }
 // 统计队列的大小
 func (q *Queue) Size() int { return len(q.data) }
 ```
+
+## 树
+
+`树定义`
+ 
+ ```text
+ 树是一种数据结构，它是由n(n>=0)个有限节点组成一个具有层次关系的集合。把它叫做“树”是因为它看起来像一棵倒挂的树，也就是说它是根朝上，而叶朝下的。它具有以下的特点: 
+ 
+ 每个节点有零个或多个子节点;没有父节点的节点称为根节点;每一个非根节点有且只有一个父节点;除了根节点外，每个子节点可以分为多个不相交的子树。
+
+ 树 (tree) 是包含 n(n 2 0) 个节点，当 n=0 时，称为空树，非空树中 (n - 1) 条边的有穷集，在非空树中:
+ (1)每个元素称为节点 (node)。
+ (2)有一个特定的节点被称为根节点或树根 (root)
+ (3) 除根节点之外的其余数据元素被分为 m (m >= 0)个互不相交的集合 T1,T2,..... Tm - 1，其中每一个集合 Ti(m >= i >= 1) 本身也是一棵树，被称作原树的子树 (subtree)
+
+ 树也可以这样定义: 树是由根节点和若干颗子树构成的。树是由一个集合以及在该集合上定义的一种关系校成的。集合中的元素称为树的节点，所定义的关系称为父子关系。父子关系在树的节点之间建立了一个层次结构。在这种层次结构中有一个节点具有特殊的地位，这个节点称为该树的根节点，或称为树根。
+ ```
+
+ 就是一颗树 根节点位root 其余的称为node :
+
+  ![树结构.png](https://s2.loli.net/2023/07/04/pKzF3SYLrbR1Pft.png)
+
+`树的递归定义`
+
+ ```text
+ 单个节点是一棵树，树根就是该节点本身。
+
+ 设T1,T2,T3....Tk是树，它们的根节点分别为n1,n2,n3,....nk。用一个新的节点n 作为n1,n2,n3,...nk 的父亲，则得到一课新树，节点 n 就是新树的根。我们称n1,n2,n3...,nk 为一组兄弟节点，它们都是节点n的子节点。我们还称T1,T2,... Tk为节点n的子树。
+ ```
+
+`树的学术名词`
+
+* 空集合也是树，称为空树。空树中没有节点;
+* 孩子节点或子节点: 一个节点含有的子树的根节点称为该节点的子节点;
+* 节点的度: 一个节点含有的子节点的个数称为该节点的度;
+* 叶节点或终端节点: 度为0的节点称为叶节点;
+* 非终端节点或分支节点: 度不为0的节点;
+* 双亲节点或父节点: 若一个节点含有子节点，则这个节点称为其子节点的父节点;
+* 兄弟节点: 具有相同父节点的节点互称为兄弟节点;
+* 树的度: 一棵树中，最大的节点的度称为树的度;
+* 节点的层次: 从根开始定义起，根为第1层，根的子节点为第2层，以此类推;
+* 树的高度或深度: 树中节点的最大层次;
+* 堂兄弟节点: 双亲在同一层的节点互为堂兄弟;
+* 节点的祖先: 从根到该节点所经分支上的所有节点;
+* 子孙: 以某节点为根的子树中任一节点都称为该节点的子孙;
+* 森林: 由 n 棵互不相交的树的集合称为森林。
+
+`树的种类`
+
+* 无序树: 树中任意节点的子结点之间没有顺序关系，这种树称为无序树,也称为自由树;
+* 有序树: 树中任意节点的子结点之间有顺序关系，这种树称为有序树;
+* 二叉树: 每个节点最多含有两个子树的树称为二叉树;
+* 满二叉树: 叶节点除外的所有节点均含有两个子树的树被称为满二叉树
+* 完全二叉树: 除最后一层外，所有层都是满节点，且最后一层缺右边连续节点的二叉树称为完全二叉树;
+* 哈夫曼树(最优二叉树): 带权路径最短的二叉树称为哈夫曼树或最优二叉树。
+
+`二叉树`
+
+ **定义和基本形态**
+
+ ```text
+ 二叉树(Binary tree) 是树形结构的一个重要类型，许多实际问题抽象出来的数据结构往往是二叉树形式，即使是一般的树也能简单地转换为二叉树，而且二叉树的存储结构及其算法都较为简单，因此二叉树显得特别重要。二叉树特点是每个结点最多只能有两棵子树，且有左右之分。
+ 
+ 二叉树是n个有限元素的集合，该集合或者为空、或者由一个称为根(root)的元素及两个不相交的、被分别称为左子树和右子树的二叉树组成，是有序树。当集合为空时，称该二叉树为空二叉树。在二叉树中，一个元素也称作一个结点。
+
+ 二叉树(binary tree) 是指树中节点的度不大于2的有序树，它是一种最简单且最重要的树。
+ 二叉树的送定义为: 二叉树是一棵空树，或者是一棵由一个根节点和两棵互不相交的，分别称作根的左子树和右子树组成的非空树;左子树和右子树又同样都是二叉树。
+ ```
+
+ 二叉树是递归定义的，其结点有左右子树之分，逻辑上二叉树有五种基本形态: 
+
+  ![1.jpg](https://s2.loli.net/2023/07/04/v3hwWOjGQEBRUrq.png)
+
+ 1. 空二叉树
+ 2. 只有一个根结点的二叉树
+ 3. 只有左子树
+ 4. 只有右子树
+ 5. 完全二叉树
+
+ **二叉树的遍历**
+ 
+ ```text
+ 所谓遍历(Traversal)是指沿着某条搜索路线，依次对树中每个结点均做一次且仅做一次访问。访问结点所做的操作依赖于具体的应用问题。 遍历是二叉树上最重要的运算之一，是二叉树上进行其它运算之基础。
+ ```
+
+ **算法实现**
+
+ 从二叉树的递归定义可知，一棵非空的二叉树由根结点及左、右子树这三个基本部分组成因此，在任一给定结点上，可以按某种次序执行三个操作:
+
+ 1. 访问节点的本身 (Node)
+ 2. 遍历该节点的左子树 (L)
+ 3. 遍历该节点的右子树 (R)
+
+ 以上三种操作拥有六种执行顺序: NLR，LNR，LRN，NRL，RNL，RLN。
+
+ *但是注意前三种次序和后三种次序对称，所以我们只学习前三种次序*
+
+ 遍历命名,根据访问结点操作发生位置命名:
+
+ 1. NLR: 二叉树的前序遍历(Preorder Traversal 亦称 (先序遍历) )
+	* 访问根结点的操作发生在遍历其左右子树之前。
+ 2. LNR: 二叉树的中序遍历(lnorder Traversal)
+	* 访问根结点的操作发生在遍历其左右子树之中 (间)。
+ 3. LRN: 二叉树的后序遍历(Postorder Traversal) 
+	* 访问根结点的操作发生在遍历其左右子树之后。
+
+ **递归的思路**
+
+```go
+/**
+ * Definition for a binary tree node.
+ * type TreeNode struct {
+ *     Val int
+ *     Left *TreeNode
+ *     Right *TreeNode
+ * }
+ */
+func preorderTraversal(root *TreeNode) []int {
+	var res = []int{}
+	var dfs func(node *TreeNode)
+	dfs = func(node *TreeNode) {
+		if node == nil {
+			return
+		}
+		res = append(res, node.Val)
+		dfs(node.Left)
+		dfs(node.Right)
+	}
+	dfs(root)
+	return res
+}
+
+func inorderTraversal(root *TreeNode) []int {
+	var res = []int{}
+	var dfs func(node *TreeNode)
+	dfs = func(node *TreeNode) {
+		if node == nil {
+			return
+		}
+		dfs(node.Left)
+		res = append(res, node.Val)
+		dfs(node.Right)
+	}
+	dfs(root)
+	return res
+}
+
+func postorderTraversal(root *TreeNode) []int {
+	var res = []int{}
+	var dfs func(node *TreeNode)
+	dfs = func(node *TreeNode) {
+		if node == nil {
+			return
+		}
+		dfs(node.Left)
+		dfs(node.Right)
+		res = append(res, node.Val)
+	}
+	dfs(root)
+	return res
+}
+```
+ 
+ **迭代的思路**
+
+ 1. 前序遍历
+	* 建立一个栈，用来存储节点
+	* 根据左右根的顺序将节点依次压入栈中，在压入栈中的同时，按照顺序把节点里的元素依次压入栈中。输出完毕之后按照顺序弹栈。
+	* 输出答案。
+ 2. 中序遍历
+    * 建立一个栈，用来存储节点
+	* 根据左根右的顺序将节点依次压入栈中，在压入栈中的同时，按照顺序把节点里的元素依次压入栈中。输出完毕之后按照顺序弹栈。
+	* 输出答案。
+ 3. 后序遍历
+    * 同前序遍历,先右再左
+	* 翻转结果数组
+	* 输出答案。
+
+```go
+type TreeNode struct {
+	Val   int
+	Left  *TreeNode
+	Right *TreeNode
+}
+
+/**
+ * Definition for a binary tree node.
+ * type TreeNode struct {
+ *     Val int
+ *     Left *TreeNode
+ *     Right *TreeNode
+ * }
+ */
+func preorderTraversal(root *TreeNode) []int {
+	var res = []int{}
+	var stack = NewStack()
+	for !stack.IsEmpty() || root != nil {
+		for root != nil {
+			// 先访问根节点
+			res = append(res, root.Val)
+			// 一直寻找左子树
+			stack.Push(root)
+			root = root.Left
+		}
+		root = stack.Pop().Right
+	}
+	return res
+}
+
+func inorderTraversal(root *TreeNode) []int {
+	var res = []int{}
+	var stack = NewStack()
+	for !stack.IsEmpty() || root != nil {
+		for root != nil {
+			stack.Push(root)
+			root = root.Left
+		}
+		if !stack.IsEmpty() {
+			root = stack.Pop()
+			res = append(res, root.Val)
+			root = root.Right
+		}
+	}
+	return res
+}
+
+func postorderTraversal(root *TreeNode) []int {
+	var res = []int{}
+	var stack = NewStack()
+	for !stack.IsEmpty() || root != nil {
+		for root != nil {
+			// 放入根节点
+			res = append(res, root.Val)
+			stack.Push(root)
+			// 一直找右
+			root = root.Right
+		}
+		// 再寻找左节点
+		if !stack.IsEmpty() {
+			root = stack.Pop().Left
+		}
+	}
+	// 得到 nrl 的结果
+	tmp := []int{}
+	for i := len(res) - 1; i >= 0; i-- {
+		tmp = append(tmp, res[i])
+	}
+	return tmp
+}
+
+type Stack struct {
+	data []*TreeNode
+}
+
+// 初始化栈
+func NewStack() Stack {
+	return Stack{
+		data: []*TreeNode{},
+	}
+}
+
+// 将元素压进栈
+func (s *Stack) Push(x *TreeNode) {
+	s.data = append(s.data, x)
+}
+
+// 将元素弹栈
+func (s *Stack) Pop() *TreeNode {
+	if s.IsEmpty() {
+		return nil
+	}
+	v := s.data[len(s.data)-1]
+	s.data = s.data[:len(s.data)-1]
+	return v
+}
+
+// 判断栈是否为空
+func (s *Stack) IsEmpty() bool {
+	return len(s.data) == 0
+}
+
+// 拿到栈顶元素
+func (s *Stack) Top() *TreeNode {
+	if s.IsEmpty() {
+		return nil
+	}
+	return s.data[len(s.data)-1]
+}
+
+// 统计栈的大小
+func (s *Stack) Size() int {
+	return len(s.data)
+}
+```
+
+`多叉树遍历`

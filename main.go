@@ -8,104 +8,87 @@ import (
 var reader = bufio.NewReader(os.Stdin)
 
 func main() {
-	// q := NewQueue()
-	// q.Push(1)
-	// q.Push(2)
-	// println(q.Pop())
-	// println(q.Pop())
-
-	s := Constructor()
-	s.Push(1)
-	s.Push(2)
-	println(s.Top())
-	println(s.Pop())
-	println(s.Empty())
 
 }
 
-type MyStack struct {
-	data *Queue
-	tmp  *Queue
+type TreeNode struct {
+	Val   int
+	Left  *TreeNode
+	Right *TreeNode
 }
 
-func Constructor() MyStack {
-	return MyStack{
-		data: NewQueue(),
-		tmp:  NewQueue(),
-	}
-}
-
-func (this *MyStack) Push(x int) {
-	this.data.Push(x)
-}
-
-func (this *MyStack) Pop() int {
-	var v = -1
-	for !this.data.IsEmpty() {
-		v = this.data.Pop()
-		this.tmp.Push(v)
-	}
-	for !this.tmp.IsEmpty() {
-		t := this.tmp.Pop()
-		if v != t {
-			this.data.Push(t)
+/**
+ * Definition for a binary tree node.
+ * type TreeNode struct {
+ *     Val int
+ *     Left *TreeNode
+ *     Right *TreeNode
+ * }
+ */
+func postorderTraversal(root *TreeNode) []int {
+	var res = []int{}
+	var stack = NewStack()
+	for !stack.IsEmpty() || root != nil {
+		for root != nil {
+			// 放入根节点
+			res = append(res, root.Val)
+			stack.Push(root)
+			// 一直找右
+			root = root.Right
+		}
+		// 再寻找左节点
+		if !stack.IsEmpty() {
+			root = stack.Pop().Left
 		}
 	}
+	// 得到 nrl 的结果
+	tmp := []int{}
+	for i := len(res) - 1; i >= 0; i-- {
+		tmp = append(tmp, res[i])
+	}
+	return tmp
+}
+
+type Stack struct {
+	data []*TreeNode
+}
+
+// 初始化栈
+func NewStack() Stack {
+	return Stack{
+		data: []*TreeNode{},
+	}
+}
+
+// 将元素压进栈
+func (s *Stack) Push(x *TreeNode) {
+	s.data = append(s.data, x)
+}
+
+// 将元素弹栈
+func (s *Stack) Pop() *TreeNode {
+	if s.IsEmpty() {
+		return nil
+	}
+	v := s.data[len(s.data)-1]
+	s.data = s.data[:len(s.data)-1]
 	return v
 }
 
-func (this *MyStack) Top() int {
-	var v = -1
-	for !this.data.IsEmpty() {
-		v = this.data.Pop()
-		this.tmp.Push(v)
+// 判断栈是否为空
+func (s *Stack) IsEmpty() bool {
+	return len(s.data) == 0
+}
+
+// 拿到栈顶元素
+func (s *Stack) Top() *TreeNode {
+	if s.IsEmpty() {
+		return nil
 	}
-	for !this.tmp.IsEmpty() {
-		this.data.Push(this.tmp.Pop())
-	}
-	return v
+	return s.data[len(s.data)-1]
 }
 
-func (this *MyStack) Empty() bool {
-	return this.data.IsEmpty()
+// 统计栈的大小
+func (s *Stack) Size() int {
+	return len(s.data)
 }
-
-type Queue struct {
-	data []int
-}
-
-// 初始化队列
-func NewQueue() *Queue {
-	return &Queue{
-		data: []int{},
-	}
-}
-
-// 入队
-func (q *Queue) Push(x int) {
-	q.data = append([]int{x}, q.data...)
-}
-
-// 从队列中取出队头元素
-func (q *Queue) Front() int {
-	if q.IsEmpty() {
-		return -1
-	}
-	return q.data[len(q.data)-1]
-}
-
-// 从队列中弹出队头元素
-func (q *Queue) Pop() int {
-	if q.IsEmpty() {
-		return -1
-	}
-	v := q.data[len(q.data)-1]
-	q.data = q.data[:len(q.data)-1]
-	return v
-}
-
-// 判断队列是否为空
-func (q *Queue) IsEmpty() bool { return len(q.data) == 0 }
-
-// 统计队列的大小
-func (q *Queue) Size() int { return len(q.data) }
