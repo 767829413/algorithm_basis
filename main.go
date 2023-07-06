@@ -11,84 +11,78 @@ func main() {
 
 }
 
-type TreeNode struct {
-	Val   int
-	Left  *TreeNode
-	Right *TreeNode
+const lenHash = 99997
+
+type bucket struct {
+	key int
+	val int
 }
 
-/**
- * Definition for a binary tree node.
- * type TreeNode struct {
- *     Val int
- *     Left *TreeNode
- *     Right *TreeNode
- * }
- */
-func postorderTraversal(root *TreeNode) []int {
-	var res = []int{}
-	var stack = NewStack()
-	for !stack.IsEmpty() || root != nil {
-		for root != nil {
-			// 放入根节点
-			res = append(res, root.Val)
-			stack.Push(root)
-			// 一直找右
-			root = root.Right
+type MyHashMap struct {
+	l    int
+	data [99997][]*bucket
+}
+
+func Constructor() MyHashMap {
+	return MyHashMap{
+		l:    lenHash,
+		data: [99997][]*bucket{},
+	}
+}
+
+func (this *MyHashMap) Put(key int, value int) {
+	idx := key % this.l
+	if this.data[idx] == nil {
+		this.data[idx] = []*bucket{}
+	}
+	for _, v := range this.data[idx] {
+		if v.key == key {
+			if v.val == value {
+				return
+			} else {
+				v.val = value
+				return
+			}
 		}
-		// 再寻找左节点
-		if !stack.IsEmpty() {
-			root = stack.Pop().Left
+	}
+	this.data[idx] = append(this.data[idx], &bucket{key, value})
+}
+
+func (this *MyHashMap) Get(key int) int {
+	idx := key % this.l
+	if this.data[idx] == nil {
+		return -1
+	}
+	for _, v := range this.data[idx] {
+		if v.key == key {
+			return v.val
 		}
 	}
-	// 得到 nrl 的结果
-	tmp := []int{}
-	for i := len(res) - 1; i >= 0; i-- {
-		tmp = append(tmp, res[i])
+	return -1
+}
+
+func (this *MyHashMap) Remove(key int) {
+	idx := key % this.l
+	if this.data[idx] == nil {
+		return
 	}
-	return tmp
-}
-
-type Stack struct {
-	data []*TreeNode
-}
-
-// 初始化栈
-func NewStack() Stack {
-	return Stack{
-		data: []*TreeNode{},
+	indexs := []int{}
+	for k, v := range this.data[idx] {
+		if v.key == key {
+			indexs = append(indexs, k)
+		}
 	}
-}
-
-// 将元素压进栈
-func (s *Stack) Push(x *TreeNode) {
-	s.data = append(s.data, x)
-}
-
-// 将元素弹栈
-func (s *Stack) Pop() *TreeNode {
-	if s.IsEmpty() {
-		return nil
+	if len(indexs) == 0 {
+		return
 	}
-	v := s.data[len(s.data)-1]
-	s.data = s.data[:len(s.data)-1]
-	return v
-}
-
-// 判断栈是否为空
-func (s *Stack) IsEmpty() bool {
-	return len(s.data) == 0
-}
-
-// 拿到栈顶元素
-func (s *Stack) Top() *TreeNode {
-	if s.IsEmpty() {
-		return nil
+	for _, index := range indexs {
+		switch index {
+		case 0:
+			this.data[idx] = this.data[idx][1:]
+		case len(this.data[idx]) - 1:
+			this.data[idx] = this.data[idx][:len(this.data[idx])-1]
+		default:
+			this.data[idx] = append(this.data[idx][:index], this.data[idx][index:]...)
+		}
 	}
-	return s.data[len(s.data)-1]
-}
-
-// 统计栈的大小
-func (s *Stack) Size() int {
-	return len(s.data)
 }

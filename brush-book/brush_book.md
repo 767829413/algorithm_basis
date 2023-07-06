@@ -293,3 +293,72 @@ func (q *Queue) IsEmpty() bool { return len(q.data) == 0 }
 // 统计队列的大小
 func (q *Queue) Size() int { return len(q.data) }
 ```
+
+## 二叉树垂序遍历
+ 
+![3.png](https://s2.loli.net/2023/07/05/bmdPnItRHx13OQZ.png)
+
+```go
+type TreeNode struct {
+	Val   int
+	Left  *TreeNode
+	Right *TreeNode
+}
+
+/**
+ * Definition for a binary tree node.
+ * type TreeNode struct {
+ *     Val int
+ *     Left *TreeNode
+ *     Right *TreeNode
+ * }
+ */
+func verticalTraversal(root *TreeNode) [][]int {
+	res := [][]int{}
+	m := make(map[int][]*col)
+	var dfs func(root *TreeNode, x, y int)
+	dfs = func(root *TreeNode, x, y int) {
+		if root == nil {
+			return
+		}
+		_, ok := m[y]
+		if !ok {
+			m[y] = []*col{}
+		}
+		m[y] = append(m[y], &col{x, root.Val})
+		dfs(root.Left, x+1, y-1)
+		dfs(root.Right, x+1, y+1)
+	}
+	dfs(root, 0, 0)
+	tmpY := []int{}
+	for k, _ := range m {
+		tmpY = append(tmpY, k)
+	}
+	sort.Ints(tmpY)
+	for _, key := range tmpY {
+		arrs := m[key]
+		if len(arrs) < 2 {
+			res = append(res, []int{arrs[0].val})
+		} else {
+			sort.Slice(arrs, func(i, j int) bool {
+				if arrs[i].x == arrs[j].x {
+					return arrs[i].val < arrs[j].val
+				} else {
+					return arrs[i].x < arrs[j].x
+				}
+			})
+			tmpArr := []int{}
+			for _, v := range arrs {
+				tmpArr = append(tmpArr, v.val)
+			}
+			res = append(res, tmpArr)
+		}
+	}
+	return res
+}
+
+type col struct {
+	x   int
+	val int
+}
+```

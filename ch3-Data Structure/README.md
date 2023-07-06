@@ -473,17 +473,25 @@ func NewQueue() Queue {
 }
 
 // 从左边入队
-func (q *Queue) PushLfet(x int) {
+func (q *Queue) PushFrist(x int) {
 	q.data = append([]int{x}, q.data...)
 }
 
 // 从右边入队
-func (q *Queue) PushRight(x int) {
+func (q *Queue) PushTail(x int) {
 	q.data = append(q.data, x)
 }
 
-// 从队列左侧取出元素
-func (q *Queue) GetLeft() int {
+// 获取队头元素
+func (q *Queue) PeekFrist() int {
+	if q.IsEmpty() {
+		return -1
+	}
+	return q.data[0]
+}
+
+// 从队头弹出元素
+func (q *Queue) RemoveFrist() int {
 	if q.IsEmpty() {
 		return -1
 	}
@@ -492,8 +500,16 @@ func (q *Queue) GetLeft() int {
 	return v
 }
 
-// 从队列右侧取出元素
-func (q *Queue) GetRight() int {
+// 获取队尾元素
+func (q *Queue) PeekTail() int {
+	if q.IsEmpty() {
+		return -1
+	}
+	return q.data[len(q.data)-1]
+}
+
+// 从队尾弹出元素
+func (q *Queue) RemoveTail() int {
 	if q.IsEmpty() {
 		return -1
 	}
@@ -898,11 +914,53 @@ func (q *Queue) Size() int { return len(q.data) }
  4. 只有右子树
  5. 完全二叉树
 
+ **二叉树的性质**
+
+  1. 性质1: 二叉树的第i层上至多有2^(i-1) (i >= 1) 个节点
+  2. 性质2: 深座为h的二叉树中至多合有(2^h)-1个节点
+  3. 性质3: 若在任意一棵二叉树中，有n0个叶子节点，有n2个度为2的节点，则必有n0=n2+1。
+  4. 性质4: 具有n个节点的完全二叉树深为log2x+1 (其中x表示不大于n的最大整数)。
+
  **二叉树的遍历**
  
  ```text
  所谓遍历(Traversal)是指沿着某条搜索路线，依次对树中每个结点均做一次且仅做一次访问。访问结点所做的操作依赖于具体的应用问题。 遍历是二叉树上最重要的运算之一，是二叉树上进行其它运算之基础。
+
+ 遍历是对树的一种最基本的运草，所谓遍历二叉树，就是按一定的规则和顺序走遍二叉树的所有结点，使每一个结点都被访问一次，而目只被访问一次。由于二叉树是非线性结构，因些树的遍历实质上是将二叉树的各个结点转换成为一个线性序列来表示。
+
  ```
+
+ 树是递归定义的，最简单也最快的实现方法就是递归遍历整个树，但是除了递归之外，迭代也是可以遍历树的，那么也就是树的宽度优先搜索。
+ 
+ **树的深度优先DFS**
+
+ 深度优先搜索属于图算法的一种，英文缩写为DFS即Depth First Searh,其过程简要来说是对每一个可的分支路径深入到不能再深入为止，而且每个节点只能访问一次.
+ 
+ 深度优先遍历图的方法是，从图中某顶点v出发:
+
+ 1. 访问顶点v;
+ 2. 依次从v的未被访问的邻接点出发，对图进行深度优先遍历;直至图中和v有路径相通的顶点都被访问;
+ 3. 若此时图中尚有顶点未被访问，则以一个未被访问的顶点出发，重新进行深度优先遍历，直到图中所有顶点均被访问过为止， 当然，当人们刚刚掌握深度优先搜索的时候常常用它来走迷宫,事实上我们还有别的方法，那就是广度优先搜索(BFS).
+ 
+ 深度优先搜索用栈 (stack) 来实现，整个过程可以想象成一个倒立的树形:
+
+ 1. 把根节点压入栈中。
+ 2. 每次从栈中弹出一个元素，按索所有在它下一级的元素，把这些元索压入栈中。并把这个元素记为它下一级元素的前驱。
+	* 前驱节点:对一棵二叉树进行中序遍历，遍历后的序，当前节点的前一个节点为该节点的前驱节点
+	* 后继节点:对一棵二叉树进行中序遍历，遍历后的顺序，当前节点的后一个节点为该节点的后继节点
+ 3. 找到所要找的元素时结束程序.
+ 4. 如果遍历整个树还没有找到，结束程序。
+
+ **树的宽度优先BFS**
+
+ BFS，其英文全称是Breadth First Search。BFS并不使用经验法则算法。从算法的观点，所有因为展开节点而得到的子节点都会被加进一个先进先出的队列中。一般的实验里，其邻居节点尚未被检验过节点会被放置在一个被称为 open 的容器中(例如队列或是链表)，而被检验过的节点则被放置在被你为 closed 的容器中。 (open-closed表)
+ 
+ 广度优先搜索使用队列(queue) 来实现，整个过程也可以看做一个倒立的树形:
+
+ 1. 把根节点放到队列的末尾。
+ 2. 每次从队列的头部取出一个元素，查看这个元素所有的下一级元素，把它们放到队列的末尾。并把这个元素记为它下一级元素的前驱。
+ 3. 找到所要找的元素时结束程序。
+ 4. 如果遍历整个树还没有找到，结束程序
 
  **算法实现**
 
@@ -1114,4 +1172,740 @@ func (s *Stack) Size() int {
 }
 ```
 
+ **二叉树的层序遍历**
+
+ 二叉树的层序遍历用到的就是: 宽度优先搜索，也就是BFS，BFS使用时要记住一点:就是宽搜只能用在边权值固定的图中，例如二叉树的层序遍历，我们在每一层每一层的遍历，边权都是1，因为每一层和每一层的间距都是一定的，我们也是每一层每一层的遍历。
+
+ [1.png](https://s2.loli.net/2023/07/05/d2p7VOwomcSeGCf.png)
+
+```go
+/**
+ * Definition for a binary tree node.
+ * type TreeNode struct {
+ *     Val int
+ *     Left *TreeNode
+ *     Right *TreeNode
+ * }
+ */
+func levelOrder(root *TreeNode) [][]int {
+	res := [][]int{}
+	q := NewQueue()
+	if root != nil {
+		q.PushTail(root)
+	}
+	for !q.IsEmpty() {
+		tmp := []int{}
+		childNums := q.Size()
+		for ; childNums > 0; childNums-- {
+			node := q.RemoveFrist()
+			tmp = append(tmp, node.Val)
+			if node.Left != nil {
+				q.PushTail(node.Left)
+			}
+			if node.Right != nil {
+				q.PushTail(node.Right)
+			}
+		}
+		res = append(res, tmp)
+	}
+	return res
+}
+
+type Queue struct {
+	data []*TreeNode
+}
+
+// 初始化队列
+func NewQueue() Queue {
+	return Queue{
+		data: []*TreeNode{},
+	}
+}
+
+// 从左边入队
+func (q *Queue) PushFrist(x *TreeNode) {
+	q.data = append([]*TreeNode{x}, q.data...)
+}
+
+// 从右边入队
+func (q *Queue) PushTail(x *TreeNode) {
+	q.data = append(q.data, x)
+}
+
+// 获取队头元素
+func (q *Queue) PeekFrist() *TreeNode {
+	if q.IsEmpty() {
+		return nil
+	}
+	return q.data[0]
+}
+
+// 从队头弹出元素
+func (q *Queue) RemoveFrist() *TreeNode {
+	if q.IsEmpty() {
+		return nil
+	}
+	v := q.data[0]
+	q.data = q.data[1:]
+	return v
+}
+
+// 获取队尾元素
+func (q *Queue) PeekTail() *TreeNode {
+	if q.IsEmpty() {
+		return nil
+	}
+	return q.data[len(q.data)-1]
+}
+
+// 从队尾弹出元素
+func (q *Queue) RemoveTail() *TreeNode {
+	if q.IsEmpty() {
+		return nil
+	}
+	v := q.data[len(q.data)-1]
+	q.data = q.data[:len(q.data)-1]
+	return v
+}
+
+// 判断队列是否为空
+func (q *Queue) IsEmpty() bool { return len(q.data) == 0 }
+
+// 统计队列的大小
+func (q *Queue) Size() int { return len(q.data) }
+```
+
+  **二叉树的垂序遍历**
+
+   ![3.png](https://s2.loli.net/2023/07/05/bmdPnItRHx13OQZ.png)
+ 
+```go
+type TreeNode struct {
+	Val   int
+	Left  *TreeNode
+	Right *TreeNode
+}
+
+/**
+ * Definition for a binary tree node.
+ * type TreeNode struct {
+ *     Val int
+ *     Left *TreeNode
+ *     Right *TreeNode
+ * }
+ */
+func verticalTraversal(root *TreeNode) [][]int {
+	res := [][]int{}
+	m := make(map[int][]*col)
+	var dfs func(root *TreeNode, x, y int)
+	dfs = func(root *TreeNode, x, y int) {
+		if root == nil {
+			return
+		}
+		_, ok := m[y]
+		if !ok {
+			m[y] = []*col{}
+		}
+		m[y] = append(m[y], &col{x, root.Val})
+		dfs(root.Left, x+1, y-1)
+		dfs(root.Right, x+1, y+1)
+	}
+	dfs(root, 0, 0)
+	tmpY := []int{}
+	for k, _ := range m {
+		tmpY = append(tmpY, k)
+	}
+	sort.Ints(tmpY)
+	for _, key := range tmpY {
+		arrs := m[key]
+		if len(arrs) < 2 {
+			res = append(res, []int{arrs[0].val})
+		} else {
+			sort.Slice(arrs, func(i, j int) bool {
+				if arrs[i].x == arrs[j].x {
+					return arrs[i].val < arrs[j].val
+				} else {
+					return arrs[i].x < arrs[j].x
+				}
+			})
+			tmpArr := []int{}
+			for _, v := range arrs {
+				tmpArr = append(tmpArr, v.val)
+			}
+			res = append(res, tmpArr)
+		}
+	}
+	return res
+}
+
+type col struct {
+	x   int
+	val int
+}
+```
+
 `多叉树遍历`
+
+ N叉树是没有中序遍历的!!!因为二叉树的中序遍历是左 根 右的节点顺序进行遍历的，由于N叉树无法分辨左右子树，所以没有中序遍历，
+
+ 1. 多叉树的前序遍历
+
+	* ![1.png](https://s2.loli.net/2023/07/06/SXBwp5D3OdfbKgR.png)
+
+```go
+/**
+ * Definition for a Node.
+ * type Node struct {
+ *     Val int
+ *     Children []*Node
+ * }
+ */
+ // 递归的写法
+func preorder(root *Node) []int {
+	res := []int{}
+
+	var dfs func(root *Node)
+	dfs = func(root *Node) {
+		if root == nil {
+			return
+		}
+		res = append(res, root.Val)
+		for _, v := range root.Children {
+			dfs(v)
+		}
+	}
+	dfs(root)
+	return res
+}
+
+// 迭代的写法
+func preorder(root *Node) []int {
+	res := []int{}
+	if root == nil {
+		return res
+	}
+	stack := NewStack()
+	stack.Push(root)
+	for !stack.IsEmpty() {
+		n := stack.Pop()
+		res = append(res, n.Val)
+		for i := len(n.Children) - 1; i >= 0; i-- {
+			stack.Push(n.Children[i])
+		}
+	}
+	return res
+}
+
+type Stack struct {
+	data []*Node
+}
+
+// 初始化栈
+func NewStack() Stack {
+	return Stack{
+		data: []*Node{},
+	}
+}
+
+// 将元素压进栈
+func (s *Stack) Push(x *Node) {
+	s.data = append(s.data, x)
+}
+
+// 将元素弹栈
+func (s *Stack) Pop() *Node {
+	if s.IsEmpty() {
+		return nil
+	}
+	v := s.data[len(s.data)-1]
+	s.data = s.data[:len(s.data)-1]
+	return v
+}
+
+// 判断栈是否为空
+func (s *Stack) IsEmpty() bool {
+	return len(s.data) == 0
+}
+
+// 拿到栈顶元素
+func (s *Stack) Top() *Node {
+	if s.IsEmpty() {
+		return nil
+	}
+	return s.data[len(s.data)-1]
+}
+
+// 统计栈的大小
+func (s *Stack) Size() int {
+	return len(s.data)
+}
+```
+
+ 2. 多叉树的后序遍历
+
+	* ![2.png](https://pic.imgdb.cn/item/64a636081ddac507cc463920.png)
+
+```go
+/**
+ * Definition for a Node.
+ * type Node struct {
+ *     Val int
+ *     Children []*Node
+ * }
+ */
+ // 递归版本
+func postorder(root *Node) []int {
+	res := []int{}
+	var dfs func(root *Node)
+	dfs = func(root *Node) {
+		if root != nil {
+			for _, v := range root.Children {
+				dfs(v)
+			}
+			res = append(res, root.Val)
+		}
+	}
+	dfs(root)
+	return res
+}
+
+// 迭代版本
+func postorder(root *Node) []int {
+	res := []int{}
+	if root == nil {
+		return res
+	}
+	stack := NewStack()
+	stack.Push(root)
+	for !stack.IsEmpty() {
+		n := stack.Pop()
+		res = append(res, n.Val)
+		for _, v := range n.Children {
+			stack.Push(v)
+		}
+	}
+	for i, j := 0, len(res)-1; i < j; i, j = i+1, j-1 {
+		res[i], res[j] = res[j], res[i]
+	}
+	return res
+}
+
+type Stack struct {
+	data []*Node
+}
+
+// 初始化栈
+func NewStack() Stack {
+	return Stack{
+		data: []*Node{},
+	}
+}
+
+// 将元素压进栈
+func (s *Stack) Push(x *Node) {
+	s.data = append(s.data, x)
+}
+
+// 将元素弹栈
+func (s *Stack) Pop() *Node {
+	if s.IsEmpty() {
+		return nil
+	}
+	v := s.data[len(s.data)-1]
+	s.data = s.data[:len(s.data)-1]
+	return v
+}
+
+// 判断栈是否为空
+func (s *Stack) IsEmpty() bool {
+	return len(s.data) == 0
+}
+
+// 拿到栈顶元素
+func (s *Stack) Top() *Node {
+	if s.IsEmpty() {
+		return nil
+	}
+	return s.data[len(s.data)-1]
+}
+
+// 统计栈的大小
+func (s *Stack) Size() int {
+	return len(s.data)
+}
+```
+
+ 2. 多叉树的层序遍历
+
+	* ![3.png](https://s2.loli.net/2023/07/06/9JrvIHEkB1W8Qes.png)
+
+```go
+/**
+ * Definition for a Node.
+ * type Node struct {
+ *     Val int
+ *     Children []*Node
+ * }
+ */
+func levelOrder(root *Node) [][]int {
+	res := [][]int{}
+	if root == nil {
+		return res
+	}
+	q := NewQueue()
+	q.PushTail(root)
+	for !q.IsEmpty() {
+		l := q.Size()
+		tmp := []int{}
+		for ; l > 0; l-- {
+			n := q.RemoveFrist()
+			tmp = append(tmp, n.Val)
+			for _, v := range n.Children {
+				q.PushTail(v)
+			}
+		}
+		res = append(res, tmp)
+	}
+	return res
+}
+
+type Queue struct {
+	data []*Node
+}
+
+// 初始化队列
+func NewQueue() Queue {
+	return Queue{
+		data: []*Node{},
+	}
+}
+
+// 从左边入队
+func (q *Queue) PushFrist(x *Node) {
+	q.data = append([]*Node{x}, q.data...)
+}
+
+// 从右边入队
+func (q *Queue) PushTail(x *Node) {
+	q.data = append(q.data, x)
+}
+
+// 获取队头元素
+func (q *Queue) PeekFrist() *Node {
+	if q.IsEmpty() {
+		return nil
+	}
+	return q.data[0]
+}
+
+// 从队头弹出元素
+func (q *Queue) RemoveFrist() *Node {
+	if q.IsEmpty() {
+		return nil
+	}
+	v := q.data[0]
+	q.data = q.data[1:]
+	return v
+}
+
+// 获取队尾元素
+func (q *Queue) PeekTail() *Node {
+	if q.IsEmpty() {
+		return nil
+	}
+	return q.data[len(q.data)-1]
+}
+
+// 从队尾弹出元素
+func (q *Queue) RemoveTail() *Node {
+	if q.IsEmpty() {
+		return nil
+	}
+	v := q.data[len(q.data)-1]
+	q.data = q.data[:len(q.data)-1]
+	return v
+}
+
+// 判断队列是否为空
+func (q *Queue) IsEmpty() bool { return len(q.data) == 0 }
+
+// 统计队列的大小
+func (q *Queue) Size() int { return len(q.data) }
+```
+
+`Trie树(字典树,前缀树)`
+ 
+ ```text
+ 又称单词查找树，Trie树，是一种树形结构，是一种哈希树的变种。典型应用是用于统计，排序和保存大显的字符串(但不仅限于字符串)，所以经常被搜索引擎系统用于文本词频统计。它的优点是，利用字符串的公共前缀来减少查询时间，最大限度地减少无谓的字符串比较，查询效率比哈希树高
+ ```
+
+ **Trie树的性质**
+ 
+ 它有3个基本性质:
+ 
+ 1. 根节点不包含字符，除根节点外每一个节点都只包含一个学符;
+ 2. 从根节点到某一节点，路径上经过的字符连接起来，为该节点对应的字符串;
+ 3. 每个节点的所有子节点包含的字符都不相同。
+
+ 总而言之 Trie树就是用来快速的存储字符申集合的数据结构。
+
+ **Trie树的基本操作**
+ 
+ 其基本操作有: 查找、插入和删除,当然删除操作比较少见。
+
+  ![4.png](https://s2.loli.net/2023/07/06/NT38jZSMClbHhgD.png)
+
+ **实现Trie树**
+
+```go
+type Trie struct {
+	root *TrieNode
+}
+
+type TrieNode struct {
+	next [26]*TrieNode
+	end  bool
+}
+
+func Constructor() Trie {
+	return Trie{
+		root: &TrieNode{
+			next: [26]*TrieNode{},
+			end:  false,
+		},
+	}
+}
+
+func (this *Trie) Insert(word string) {
+	cur := this.root
+	b := []byte(word)
+	for _, v := range b {
+		idx := v - 'a'
+		if cur.next[idx] == nil {
+			cur.next[idx] = &TrieNode{
+				next: [26]*TrieNode{},
+				end:  false,
+			}
+		}
+		cur = cur.next[idx]
+	}
+	cur.end = true
+}
+
+func (this *Trie) Search(word string) bool {
+	cur := this.root
+	b := []byte(word)
+	for _, v := range b {
+		idx := v - 'a'
+		if cur.next[idx] == nil {
+			return false
+		}
+		cur = cur.next[idx]
+	}
+	return cur.end
+}
+
+func (this *Trie) StartsWith(prefix string) bool {
+	cur := this.root
+	b := []byte(prefix)
+	for _, v := range b {
+		idx := v - 'a'
+		if cur.next[idx] == nil {
+			return false
+		}
+		cur = cur.next[idx]
+	}
+	return true
+}
+```
+
+## 哈希表
+
+`定义` 
+ 
+ ```text
+ 散列表 (Hash table，也叫哈希表) ，是根据关键码值(Key value)而直接进行访问的数据结构。也就是说，它通过把关键码值映射到表中一个位置来访问记录，以加快查找的速度。这个映射函数叫做散列函数，存放记录的数组叫做散列表
+
+ 给定表M，存在函数f(key)，对任意给定的关键字值key，代入函数后若能得到包含该关键字的记录在表中的地址，则称表M为哈希 (Hash) 表，函数f(key)为哈希(Hash)函数
+
+ 哈希表结构一般是将庞大的数据量存储到一个较小的集合中
+ ```
+
+`基本概念`
+ 
+ 1. 若关键字为n，则其值存放在f(n)的存储位置上。由此，不需比较便可直接取得所查记录。称这个对应关系f为散列函数，按这个思想建立的表为散列表。
+ 2. 对不同的关键字可能得到同一散列地址，即n1 != n2，而f(n1)==f(n2)，这种现象称为冲突。具有相同函数值的关键字对该散列函数来说称做同义词。综上所述，根据散列函数f(n)和处理冲突的方法将一组关键字映射到一个有限的连续的地址集 (区间)上，并以关键字在地址集中的“像”作为记录在表中的存储位置，这种表便称为散列表，这一映射过程称为散列造表或散列，所得的存储位置称散列地址。
+ 3. 若对于关键字集合中的任一个关键字，经散列函数映象到地址集合中任何一个地址的概率是相等的，则称此类散列函数为均匀散列函数(Uniform Hash function)，这就是使关键字经过散列函数得到一个“随机的地址”，从而减少冲突
+ 4. 在设计哈希表的时候，最需要注意两个基本因素:一个是哈希函数的编写，一个是键冲突解决算法
+
+`散列函数`
+
+ ```text
+ 一般的线性表，树中，记录在结构中的相对位置是随机的，即和记录的关键字之间不存在确定的关系，因此，在结构中查找记录时需进行一系列和关键字的比较。这一类查找方法建立在“比较”的基础上，查找的效率依赖于查找过程中所进行的比较次数。 理想的情况是能直接找到需要的记录，因此必须在记录的存储位置和它的关键字之间建立一个确定的对应关系f，使每个关键字和结构中一个唯一的存储位置相对应。
+ ```
+
+ 哈希表中元素的位置是由哈希函数确定的。将数据元素的关键字n作为自变量，通过一定的函数关系计算出的值，即为该元素的存储地址。
+
+`哈希冲突和处理的办法`
+
+ 在哈希表中，不同的关键字值对应到同一个存储位置的现象。即关键字n1 != n2，但f(n1) == f (n2)。均匀的哈希函数可以减少冲突，但不能避免冲突。发生冲突后，必须解决;也即必须寻找下一个可用地址。
+
+ 1. 拉链法 (最常用的解决哈希冲突的算法)
+	* 将具有同一散列地址的记录存储在一条线性链表中。例，除留余数法中，设关键字为(18,14,01,68,27,55,79) ，除数为13。散列地址为 (5,1,1,3,1,3,1) , 模数尽量为质数,远离 2^n
+ 
+ 2. 开放定址法
+
+`哈希集合`
+ 
+ Hash_set 被称为集合，该容器中只能存放不重复的对象。 
+ 
+ ![5.png](https://s2.loli.net/2023/07/06/WEYqm8JeNfTM3Qv.png)
+
+```go
+type MyHashSet struct {
+	l    int
+	data [99997][]int
+}
+
+func Constructor() MyHashSet {
+	return MyHashSet{
+		data: [99997][]int{},
+		l:    99997,
+	}
+}
+
+func (this *MyHashSet) Add(key int) {
+	idx := key % this.l
+	if this.data[idx] == nil {
+		this.data[idx] = []int{key}
+		return
+	}
+	for _, v := range this.data[idx] {
+		if v == key {
+			return
+		}
+	}
+	this.data[idx] = append(this.data[idx], key)
+}
+
+func (this *MyHashSet) Remove(key int) {
+	idx := key % this.l
+	if this.data[idx] == nil {
+		return
+	}
+	index := -1
+	for k, v := range this.data[idx] {
+		if v == key {
+			index = k
+		}
+	}
+	if index == -1 {
+		return
+	}
+	switch index {
+	case 0:
+		this.data[idx] = this.data[idx][1:]
+	case len(this.data[idx]) - 1:
+		this.data[idx] = this.data[idx][:len(this.data[idx])-1]
+	default:
+		this.data[idx] = append(this.data[idx][:index], this.data[idx][index:]...)
+	}
+}
+
+func (this *MyHashSet) Contains(key int) bool {
+	idx := key % this.l
+	if this.data[idx] == nil {
+		return false
+	}
+	for _, v := range this.data[idx] {
+		if v == key {
+			return true
+		}
+	}
+	return false
+}
+```
+
+`哈希映射`
+
+ Hash_map 存放的是键值对，我们可以通过键 (key) 来找到对应的值 (value)。
+
+ ![6.png](https://s2.loli.net/2023/07/06/LOPwqcnMbJzXsuE.png)
+
+```go
+const lenHash = 99997
+
+type bucket struct {
+	key int
+	val int
+}
+
+type MyHashMap struct {
+	l    int
+	data [99997][]*bucket
+}
+
+func Constructor() MyHashMap {
+	return MyHashMap{
+		l:    lenHash,
+		data: [99997][]*bucket{},
+	}
+}
+
+func (this *MyHashMap) Put(key int, value int) {
+	idx := key % this.l
+	if this.data[idx] == nil {
+		this.data[idx] = []*bucket{}
+	}
+	for _, v := range this.data[idx] {
+		if v.key == key {
+			if v.val == value {
+				return
+			} else {
+				v.val = value
+				return
+			}
+		}
+	}
+	this.data[idx] = append(this.data[idx], &bucket{key, value})
+}
+
+func (this *MyHashMap) Get(key int) int {
+	idx := key % this.l
+	if this.data[idx] == nil {
+		return -1
+	}
+	for _, v := range this.data[idx] {
+		if v.key == key {
+			return v.val
+		}
+	}
+	return -1
+}
+
+func (this *MyHashMap) Remove(key int) {
+	idx := key % this.l
+	if this.data[idx] == nil {
+		return
+	}
+	indexs := []int{}
+	for k, v := range this.data[idx] {
+		if v.key == key {
+			indexs = append(indexs, k)
+		}
+	}
+	if len(indexs) == 0 {
+		return
+	}
+	for _, index := range indexs {
+		switch index {
+		case 0:
+			this.data[idx] = this.data[idx][1:]
+		case len(this.data[idx]) - 1:
+			this.data[idx] = this.data[idx][:len(this.data[idx])-1]
+		default:
+			this.data[idx] = append(this.data[idx][:index], this.data[idx][index:]...)
+		}
+	}
+}
+```
