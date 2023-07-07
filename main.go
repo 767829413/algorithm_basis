@@ -15,8 +15,8 @@ func main() {
 }
 
 func BubbleSort(arr []int) {
-	for i := 0; i < len(arr)-1; i++ {
-		for j := 0; j < len(arr)-1-i; j++ {
+	for i := 0; i < len(arr)-1; i++ { // n - 1 循环,最后一个不管
+		for j := 0; j < len(arr)-1-i; j++ { // 第二轮指针,每一轮都会排好一个数
 			if arr[j] > arr[j+1] {
 				arr[j], arr[j+1] = arr[j+1], arr[j]
 			}
