@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"fmt"
 	"os"
 
 	"github.com/767829413/algorithm_basis/utilcom"
@@ -10,16 +11,34 @@ import (
 var reader = bufio.NewReader(os.Stdin)
 
 func main() {
-	arr := utilcom.BuildTestArr(5, 100, 1)
-	utilcom.PrintSortComparison(arr, BubbleSort)
+	arr := utilcom.BuildTestArrInt(5, 200, 0)
+	// arr := utilcom.BuildTestArrFloat64(5)
+	//排序前
+	fmt.Println(arr)
+	fmt.Println(len(arr))
+	//排序
+	QuickSort(arr, 0, len(arr)-1)
+	//排序后
+	fmt.Println(arr)
+	fmt.Println(len(arr))
 }
 
-func BubbleSort(arr []int) {
-	for i := 0; i < len(arr)-1; i++ { // n - 1 循环,最后一个不管
-		for j := 0; j < len(arr)-1-i; j++ { // 第二轮指针,每一轮都会排好一个数
-			if arr[j] > arr[j+1] {
-				arr[j], arr[j+1] = arr[j+1], arr[j]
-			}
+func QuickSort(arr []int, l, r int) {
+	if l >= r {
+		return
+	}
+	i, j, x := l, r, arr[(l+r)>>1]
+	for i < j {
+		for arr[i] < x {
+			i++
+		}
+		for arr[j] > x {
+			j--
+		}
+		if i < j {
+			arr[i], arr[j] = arr[j], arr[i]
 		}
 	}
+	QuickSort(arr, l, j)
+	QuickSort(arr, j+1, r)
 }

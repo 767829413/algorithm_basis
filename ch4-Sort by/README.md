@@ -92,4 +92,210 @@ func BubbleSort(arr []int) {
 `代码实现`
 
 ```go
+func SelectionSort(arr []int) {
+	for i := 0; i < len(arr)-1; i++ {
+		minIdx := i
+		for j := i + 1; j < len(arr); j++ {
+			if arr[minIdx] > arr[j] {
+				minIdx = j
+			}
+		}
+		arr[minIdx], arr[i] = arr[i], arr[minIdx]
+	}
+}
+```
+
+## 插入排序
+
+`定义`
+
+ ```text
+ 插入排序 (Insertion-Sort) 的算法描述是一种简单直观的排序算法。它的工作原理是通过构建有序序列，对于未排序数据，在已排序序列中从后向前扫描，找到相应位置并插入。
+ ```
+
+`算法思路`
+ 
+ 一般来说，插入排序都采用in-place在数组上实现。具体算法描述如下:
+
+ 1. 从第一个元素开始，该元素可以认为已经被排序;
+ 2. 取出下一个元素，在已经排序的元素序列中从后向前扫描;
+ 3. 如果该元素(已排序) 大于新元素，将该元素移到下一位置;
+ 4. 重复步骤3，直到找到已排序的元素小于或者等于新元素的位置
+ 5. 将新元素插入到该位置后;
+ 6. 重复步骤2~5。
+
+`代码实现`
+
+```go
+func InsertionSort(arr []int) {
+	for i := 1; i < len(arr); i++ {
+		preIdx, cur := i-1, arr[i]
+		for ; preIdx >= 0 && arr[preIdx] > cur; preIdx-- {
+			arr[preIdx+1] = arr[preIdx]
+		}
+		arr[preIdx+1] = cur
+	}
+}
+```
+
+## 桶排序
+
+`定义`
+
+ ```text
+ 桶排序是计数排序的升级版。它利用了函数的映射关系，高效与否的关键就在于这个映射函数的确定。桶排序(Bucket sort)的工作的原理: 假设输入数据服从均匀分布，将数据分到有限数量的桶里，每个桶再分别排序(有可能再使用别的排序算法或是以递归方式继续使用桶排序进行排)。
+ ```
+
+`算法思路`
+
+ 1. 设置一个定量的数组当作空桶;
+ 2. 遍历输入数据，并且把数据一个一个放到对应的桶里去;
+ 3. 对每个不是空的桶进行排序;
+ 4. 从不是空的桶里把排好序的数据拼接起来;
+
+`代码实现`
+
+```go
+func BucketSort(arr []float64) {
+	bucketSize := len(arr)
+	buckets := make([][]float64, bucketSize)
+	for i := 0; i < bucketSize; i++ {
+		bucketIdx := int(float64(bucketSize) * arr[i])
+		buckets[bucketIdx] = append(buckets[bucketIdx], arr[i])
+	}
+
+	for i := 0; i < bucketSize; i++ {
+		sort.Float64s(buckets[i])
+	}
+
+	idx := 0
+	for i := 0; i < bucketSize; i++ {
+		for j := 0; j < len(buckets[i]); j++ {
+			arr[idx] = buckets[i][j]
+			idx++
+		}
+	}
+}
+```
+
+## 基数排序
+
+`定义`
+
+ ```text
+ 基数排序是按照低位先排序，然后收集;再按照高位排序，然后再收集;依次类推，直到最高位。有时候有些属性是有优先级顺序的，先按低优先级排序，再按高优先级排序。最后的次序就是高优先级高的在前，高优先级相同的低优先级高的在前。
+ ```
+
+`算法思路`
+
+ 1. 取得数组中的最大数，并取得位数;
+ 2. arr为原始数组，从最低位开始取每个位组成radix数组;
+ 3. 对radix进行计数排序(利用计数排序适用于小范围数的特点);
+
+`代码实现`
+
+```go
+var MaxDigit = 0
+func RadixSort(arr []int) {
+	buckets := [10]*Queue{}
+	for i := range buckets { // 定义十个桶表示 0~9
+		buckets[i] = NewQueue()
+	}
+	// 取位
+	mod, div, l := 10, 1, len(arr)
+	for i := 0; i < MaxDigit; i++ {
+		for j := 0; j < l; j++ {
+			digit := (arr[j] / div) % mod
+			buckets[digit].Push(arr[j])
+		}
+		idx :=0
+		for i:=0;i<10;i++ {
+			for !buckets[i].IsEmpty(){
+				arr[idx] = buckets[i].Pop()
+				idx++
+			}
+		}
+		div *= 10
+	}
+}
+
+type Queue struct {
+	data []int
+}
+
+// 初始化队列
+func NewQueue() *Queue {
+	return &Queue{
+		data: []int{},
+	}
+}
+
+// 入队
+func (q *Queue) Push(x int) {
+	q.data = append(q.data, x)
+}
+
+// 从队列中取出队头元素
+func (q *Queue) Front() int {
+	if q.IsEmpty() {
+		return -1
+	}
+	return q.data[0]
+}
+
+// 从队列中弹出队头元素
+func (q *Queue) Pop() int {
+	if q.IsEmpty() {
+		return -1
+	}
+	v := q.data[0]
+	q.data = q.data[1:]
+	return v
+}
+
+// 判断队列是否为空
+func (q *Queue) IsEmpty() bool { return len(q.data) == 0 }
+
+// 统计队列的大小
+func (q *Queue) Size() int { return len(q.data) }
+```
+
+## 快速排序
+
+`定义`
+
+ ```text
+ 快速排序的基本思想: 通过一趟排序将待排记录分隔成独立的两部分，其中一部分记录的关键字均比另一部分的关键字小，则可分别对这两部分记录继续进行排序，以达到整个序列有序。
+ ```
+
+`算法思路`
+
+ 快速排序使用分治法来把一个串 (list) 分为两个子串 (sub-lists) 。具体算法描述如下:
+
+ 1. 从数列中挑出一个元素，称为“基准”(pivot);
+ 2. 重新排序数列，所有元素比基准值小的摆放在基准前面，所有元素比基准值大的摆在基准的后面(相同的数可以到任一边) 。在这个分区退出之后，该基准就处于数列的中间位置。这个称为分区 (partition) 操作;
+ 3. 递归地 (recursive) 把小于基准值元素的子数列和大于基准值元素的子数列排序;
+ 
+`代码实现`
+
+```go
+func QuickSort(arr []int, l, r int) {
+	if l >= r {
+		return
+	}
+	i, j, x := l, r, arr[(l+r)>>1]
+	for i < j {
+		for arr[i] < x {
+			i++
+		}
+		for arr[j] > x {
+			j--
+		}
+		if i < j {
+			arr[i], arr[j] = arr[j], arr[i]
+		}
+	}
+	QuickSort(arr, l, j)
+	QuickSort(arr, j+1, r)
+}
 ```
