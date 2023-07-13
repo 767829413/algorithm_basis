@@ -11,34 +11,31 @@ import (
 var reader = bufio.NewReader(os.Stdin)
 
 func main() {
-	arr := utilcom.BuildTestArrInt(5, 200, 0)
+	arr := utilcom.BuildTestArrInt(9, 100, -50)
 	// arr := utilcom.BuildTestArrFloat64(5)
 	//排序前
 	fmt.Println(arr)
 	fmt.Println(len(arr))
 	//排序
-	QuickSort(arr, 0, len(arr)-1)
+	ShellSort(arr)
 	//排序后
 	fmt.Println(arr)
 	fmt.Println(len(arr))
 }
 
-func QuickSort(arr []int, l, r int) {
-	if l >= r {
-		return
+func ShellSort(arr []int) {
+	increase := len(arr) >> 1
+	for increase > 0 {
+		// 选择排序
+		for i := increase; i < len(arr); i++ {
+			idx, cur := i, arr[i]
+			pre := idx - increase
+			for idx >= increase && cur < arr[pre] {
+				arr[idx] = arr[pre]
+				idx -= increase
+			}
+			arr[idx] = cur
+		}
+		increase >>= 1
 	}
-	i, j, x := l, r, arr[(l+r)>>1]
-	for i < j {
-		for arr[i] < x {
-			i++
-		}
-		for arr[j] > x {
-			j--
-		}
-		if i < j {
-			arr[i], arr[j] = arr[j], arr[i]
-		}
-	}
-	QuickSort(arr, l, j)
-	QuickSort(arr, j+1, r)
 }

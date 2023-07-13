@@ -138,6 +138,43 @@ func InsertionSort(arr []int) {
 }
 ```
 
+## 希尔排序
+
+`定义`
+
+ ```text
+ 1959年Sshell发明，第一个突破O(n^2)的排序算法，是简单插入排序的改进版。它与插入排序的不同之处在于，它会优先比较距离较远的元素。希尔排序又叫缩小增量排序
+ ```
+
+`算法思路`
+ 
+ 先将整个待排序的记录序列分割成为若干子序列分别进行直接插入排序，具体算法描述:
+
+ 1. 选择一个增量序列t1，t2，...，tk，其中ti > tj，tk = 1;
+ 2. 按增量序列个数k，对序列进行 k 趟排序;
+ 3. 每趟排序，根据对应的增量ti，将待排序列分割成若千长度为 m 的子序列，分别对各子表进行直接插入排序。仅增量因子为 1 时，整个序列作为一个表来处理，表长度即为整个序列的长度。
+
+`代码实现`
+
+```go
+func ShellSort(arr []int) {
+	increase := len(arr) >> 1
+	for increase > 0 {
+		// 选择排序
+		for i := increase; i < len(arr); i++ {
+			idx, cur := i, arr[i]
+			pre := idx - increase
+			for idx >= increase && cur < arr[pre] {
+				arr[idx] = arr[pre]
+				idx -= increase
+			}
+			arr[idx] = cur
+		}
+		increase >>= 1
+	}
+}
+```
+
 ## 桶排序
 
 `定义`
@@ -297,5 +334,202 @@ func QuickSort(arr []int, l, r int) {
 	}
 	QuickSort(arr, l, j)
 	QuickSort(arr, j+1, r)
+}
+```
+
+## 归并排序
+
+`定义`
+
+ ```text
+ 归并排序是建立在归并操作上的一种有效的排序算法。该算法是采用分治法 (Divideand Conquer)的一个非常典型的应用。将已有序的子序列合并，得到完全有序的序列;即先使每个子序列有序，再使子序列段间有序。若将两个有序表合并成一个有序表，称为2-路归并
+ ```
+
+`算法思路`
+
+ 归并排序是建立在归并操作上的一种有效的排序算法。该算法是采用分治法 (Divide andConquer) 的一个非常典型的应用。将已有序的子序列合并，得到完全有序的序列;即先使每个子序列有序，再使子序列段间有序。若将两个有序表合并成一个有序表，称为2-路归并。
+
+ 1. 把长度为n的输入序列分成两个长度为n/2的子序列;
+ 2. 对这两个子序列分别采用归并排序;
+ 3. 将两个排序好的子序列合并成一个最终的排序序列;
+ 
+`代码实现`
+
+```go
+func NormalizedSort(arr []int, l, r int) {
+	if l >= r {
+		return
+	}
+	mid := ((r - l) >> 1) + l
+	NormalizedSort(arr, l, mid)
+	NormalizedSort(arr, mid+1, r)
+	mergeArr := []int{}
+	for i, j := l, mid+1; i <= mid || j <= r; {
+		if i > mid {
+			for j <= r {
+				mergeArr = append(mergeArr, arr[j])
+				j++
+			}
+			break
+		}
+		if j > r {
+			for i <= mid {
+				mergeArr = append(mergeArr, arr[i])
+				i++
+			}
+			break
+		}
+		if arr[i] < arr[j] {
+			mergeArr = append(mergeArr, arr[i])
+			i++
+		} else {
+			mergeArr = append(mergeArr, arr[j])
+			j++
+		}
+	}
+	for idx, i := 0, l; i <= r; i, idx = i+1, idx+1 {
+		arr[i] = mergeArr[idx]
+	}
+}
+```
+
+## 堆排序
+
+`定义`
+
+ ```text
+ 堆排序(Heapso)是指利用堆这种数结构所设计的一种排序算法，堆积是一个近似完全二又树的结构，并同时满足堆积的性质: 即子结点的键值或索引总是小于等于 (或者大于等于) 它的父节点。
+ ```
+
+`堆的基本知识`
+ 
+ 用到了数据结构堆。学会堆排序之前首先要知道什么是大顶堆和小顶堆。
+
+ 1. 堆是一颗完全二叉树;
+ 2. 小根堆: 每一个点的元素的大小都是小于等于左右子节点的,所以根节点就是整个堆里最小的值;
+ 3. 小根堆是数组来存储元素的。数组的第一个位置装的是根节点。如果根节点的是第i个点的话，那么左儿子在数组中的下标位置为2 \* i，右儿子的坐标位置为 2 \* i + 1，*注意我们的下标从1开始，这样就不会有 2 \* 0 = 0 的情况了，比较方便*;
+ 4. 堆的操作: 
+	* 插入一个数
+	* 求堆中的最小值
+	* 删除最小值
+	* 删除任意一个堆中的元素
+	* 修改任意一个堆中的元素
+ 5. ![1.jpg](https://s2.loli.net/2023/07/12/OGtQZMYuiDcs3ho.png)
+
+`堆的操作`
+
+ 堆常用的操作有两个，一个是上移操作(up),下移操作 (down)
+
+ 1. **下移操作 (down)**
+	* ![2.jpg](https://s2.loli.net/2023/07/12/kEVDPJaGMjgzmh2.png) 
+ 2. **上移操作(up)**
+	* ![3.jpg](https://s2.loli.net/2023/07/12/hQlX52G6VboAK4O.png) 
+ 3. 堆的其他操作
+	* 插入一个数 num : 插入一个数就是在我们的数组最后插入一个数，然后在up一下就可以。
+
+	```text
+	heap[++ size] = num, up(num);
+	```
+
+	* 求堆中的最小值: 数组中第一个元素就是我们的最小值也就是根节点
+
+	```text
+	heap[1];
+	```
+
+	* 删除最小值: 因为小根堆最麻烦的就是删除最小值，所以我们需要用一些小trick去解决，我们目前这里只有这样解决:
+		1. 把堆最后面的一个元素赋值给堆顶元素;
+		2. 删除堆最后面的那个元素;
+		3. 将新的根节点进行down操作;
+	
+	```text
+	heap[1] = heap[size]，size -- ,down(1);
+	```
+
+	* 删除任意一个堆中的元素: 和删除最小值类似，也是让堆的最后的一个元素赋值给当前要删除的元素的节点，然后分情况判断是up还是down。
+		1. 如果heap\[x\]的值变大了，说明需要进行down操作;
+		2. 如果heap\[x\]的值变小了，说明需要进行up操作;
+		3. 任然保持小顶堆规则,不进行操作
+
+	```text
+	heap[x] = heap[size],size --，down(x) up(x);
+	```
+
+	* 修改任意一个堆中元素为 num: 这个和删除一样,只是不需要进行最后一个元素的赋值
+
+	```text
+	heap[x] = num, down(x) up(x);
+	```
+
+`算法思路`
+
+ 堆排序也是一种排序，跟我们的快速排序，归并排序是一样的，我们每次都输出我们的堆顶元素，然后删除堆顶元素，在输出新的堆顶元素，那么这样我们就可以从小到大输出我们的序列了。
+
+ 1. 输出堆顶元素，那也就是输出heap\[1\]就可以了，时间复杂度就是O(1);
+ 2. 需要删除堆顶元素，需要实现down操作。down操作时间复杂度跟堆层数有关系，时间复杂度为O(logn);
+ 3. 需要建堆，如何将一个数组变成堆的操作,目前有两种方式:
+	* 直接建堆，把每个数组中的元素都down一遍，每一次down的操作是logn的时间复杂度，一共n个数，那么时间复杂度为O(nlogn)。
+	* 可以从中间开始建堆: 时间复杂度为O(n)。为什么呢? 来看一个图:
+		* ![4.png](https://s2.loli.net/2023/07/12/iWazhJAE9cZKqYd.png)
+ 
+`代码实现`
+
+```go
+func HeapSort(arr []int) {
+	h := NewHeap(arr)
+	idx:=0
+	for !h.IsEmpty() {
+		arr[idx] = h.Pop()
+		idx++
+	}
+}
+
+type Heap struct {
+	data []int
+	cap  int
+}
+
+func NewHeap(arr []int) *Heap {
+	heap := &Heap{
+		data: append([]int{0}, arr...),
+		cap:  len(arr),
+	}
+	for i := heap.cap / 2; i > 0; i-- {
+		heap.Down(i)
+	}
+	return heap
+}
+
+func (h *Heap) Down(root int) {
+	min, childL, childR := root, root*2, root*2+1
+	if childL <= h.cap && h.data[childL] < h.data[min] {
+		min = childL
+	}
+	if childR <= h.cap && h.data[childR] < h.data[min] {
+		min = childR
+	}
+
+	if root != min {
+		h.data[root], h.data[min] = h.data[min], h.data[root]
+		// 递归下去维护小根堆
+		h.Down(min)
+	}
+}
+
+func (h *Heap) Pop() int {
+	if h.IsEmpty() {
+		panic("Heap is empty")
+	}
+	res := h.data[1]
+	defer func() {
+		h.data[1] = h.data[h.cap]
+		h.cap--
+		h.Down(1)
+	}()
+	return res
+}
+
+func (h *Heap) IsEmpty() bool {
+	return h.cap == 0
 }
 ```
