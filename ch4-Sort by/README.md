@@ -158,19 +158,17 @@ func InsertionSort(arr []int) {
 
 ```go
 func ShellSort(arr []int) {
-	increase := len(arr) >> 1
-	for increase > 0 {
-		// 选择排序
-		for i := increase; i < len(arr); i++ {
+	incream := len(arr) >> 1
+	for incream > 0 {
+		for i := incream; i < len(arr); i++ {
 			idx, cur := i, arr[i]
-			pre := idx - increase
-			for idx >= increase && cur < arr[pre] {
-				arr[idx] = arr[pre]
-				idx -= increase
+			for idx >= incream && arr[idx-incream] > cur {
+				arr[idx] = arr[idx-incream]
+				idx -= incream
 			}
 			arr[idx] = cur
 		}
-		increase >>= 1
+		incream >>= 1
 	}
 }
 ```
