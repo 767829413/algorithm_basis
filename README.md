@@ -4,3 +4,4 @@
 * [递归和二分](./ch2-Recursion%20and%20Dichotomy/README.md)
 * [数据结构](./ch3-Data%20Structure/README.md)
 * [排序](./ch4-Sort%20by/README.md)
+* [前缀和与差分](./ch5-Prefix%20sum%20and%20difference/README.md)
