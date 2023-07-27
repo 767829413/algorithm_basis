@@ -3,52 +3,50 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"math/rand"
 	"os"
-	"time"
+	"strconv"
+	"strings"
 )
 
 // var arr := utilcom.BuildTestArrInt(9, 100, 0)
 // var limit := utilcom.BuildTestArrInt(2, 9, 0)
 var reader = bufio.NewReader(os.Stdin)
+var f []int
 
 func main() {
-	var max, min = 100, 0
-	var a, b, n, m, q, nums = [8][8]int{}, [8][8]int{}, 5, 5, 1, 3
-	var x1, y1, x2, y2 = 1, 1, n - 1, m - 1
-	rand.Seed(time.Now().UnixNano())
-	for i := 1; i <= n; i++ {
-		for j := 1; j <= m; j++ {
-			a[i][j] = rand.Intn(max-min) + min
+	fmt.Println("请输入n和m的值")
+	data, _ := reader.ReadString('\n')
+	dataArr := strings.Split(strings.TrimSpace(data), " ")
+	n, _ := strconv.Atoi(strings.TrimSpace(dataArr[0]))
+	m, _ := strconv.Atoi(strings.TrimSpace(dataArr[1]))
+	// 初始化
+	f = make([]int, n)
+	for i := 0; i < n; i++ {
+		f[i] = i
+	}
+
+	for ; m > 0; m-- {
+		fmt.Println("请输入操作 M a b 或者 Q a b")
+		input, _ := reader.ReadString('\n')
+		inputArr := strings.Split(strings.TrimSpace(input), " ")
+		op := strings.TrimSpace(inputArr[0])
+		a, _ := strconv.Atoi(strings.TrimSpace(inputArr[1]))
+		b, _ := strconv.Atoi(strings.TrimSpace(inputArr[2]))
+		if op == "M" {
+			f[find(a)] = find(b)
+		} else {
+			if find(a) == find(b) {
+				fmt.Println("Yes")
+			} else {
+				fmt.Println("No")
+			}
 		}
 	}
-
-	// 构造差分数组
-	for i := 1; i <= n; i++ {
-		for j := 1; j <= m; j++ {
-			// insert(i, j, i, j, a[i][j], &b)
-			b[i][j] = a[i][j] - a[i-1][j] - a[i][j-1] + a[i-1][j-1]
-		}
-	}
-
-	for ; q > 0; q-- {
-		insert(x1, y1, x2, y2, nums, &b)
-	}
-
-	for i := 1; i <= n; i++ {
-		for j := 1; j <= m; j++ {
-			b[i][j] = b[i-1][j] + b[i][j-1] - b[i-1][j-1] + b[i][j]
-		}
-	}
-	fmt.Println(a)
-	fmt.Println(b)
-
 }
 
-func insert(x1, y1, x2, y2, nums int, b *[8][8]int) {
-	// b[i][j] = a[i][j] - a[i-1][j] - a[i][j-1] + a[i-1][j-1]
-	b[x1][y1] += nums
-	b[x1][y2+1] -= nums
-	b[x2+1][y1] -= nums
-	b[x2+1][y2+1] += nums
+func find(x int) int {
+	if f[x] != x {
+		f[x] = find(f[x])
+	}
+	return f[x]
 }

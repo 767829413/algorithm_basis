@@ -88,4 +88,44 @@ int find(int i) { //查询祖先
  **一共有 n 个数，编号是 1~n，最开始每个数各自在一个集合中。第一行输入数字n和m，表示n个数字和m次询问，询问操作共有两种: 1.M a b，将编号为数字a和b的两个集合合并。如果已经合并，则忽略此操作。2.Q a b询问编号a和b的两个数字是否在一个集合里。是的话输出yes，不是输出No。**
 
 ```go
+var reader = bufio.NewReader(os.Stdin)
+var f []int
+
+func main() {
+	fmt.Println("请输入n和m的值")
+	data, _ := reader.ReadString('\n')
+	dataArr := strings.Split(strings.TrimSpace(data), " ")
+	n, _ := strconv.Atoi(strings.TrimSpace(dataArr[0]))
+	m, _ := strconv.Atoi(strings.TrimSpace(dataArr[1]))
+	// 初始化
+	f = make([]int, n)
+	for i := 0; i < n; i++ {
+		f[i] = i
+	}
+
+	for ; m > 0; m-- {
+		fmt.Println("请输入操作 M a b 或者 Q a b")
+		input, _ := reader.ReadString('\n')
+		inputArr := strings.Split(strings.TrimSpace(input), " ")
+		op := strings.TrimSpace(inputArr[0])
+		a, _ := strconv.Atoi(strings.TrimSpace(inputArr[1]))
+		b, _ := strconv.Atoi(strings.TrimSpace(inputArr[2]))
+		if op == "M" {
+			f[find(a)] = find(b)
+		} else {
+			if find(a) == find(b) {
+				fmt.Println("Yes")
+			} else {
+				fmt.Println("No")
+			}
+		}
+	}
+}
+
+func find(x int) int {
+	if f[x] != x {
+		f[x] = find(f[x])
+	}
+	return f[x]
+}
 ```
