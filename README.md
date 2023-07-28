@@ -6,3 +6,4 @@
 * [排序](./ch4-Sort%20by/README.md)
 * [前缀和与差分](./ch5-Prefix%20sum%20and%20difference/README.md)
 * [并查集](./ch6-Parallelism%20set%20algorithm/README.md)
+* [高精度算法](./ch7-High%20Precision/README.md)
