@@ -14,39 +14,109 @@ var reader = bufio.NewReader(os.Stdin)
 var f []int
 
 func main() {
-	fmt.Println("请输入n和m的值")
-	data, _ := reader.ReadString('\n')
-	dataArr := strings.Split(strings.TrimSpace(data), " ")
-	n, _ := strconv.Atoi(strings.TrimSpace(dataArr[0]))
-	m, _ := strconv.Atoi(strings.TrimSpace(dataArr[1]))
-	// 初始化
-	f = make([]int, n)
-	for i := 0; i < n; i++ {
-		f[i] = i
+	fmt.Println("请输入a")
+	aStr, _ := reader.ReadString('\n')
+	fmt.Println("请输入b")
+	bStr, _ := reader.ReadString('\n')
+	aStr = strings.TrimSpace(aStr)
+	b, _ := strconv.Atoi(strings.TrimSpace(bStr))
+	a := []int{}
+	for i := len(aStr) - 1; i >= 0; i-- {
+		a = append(a, int(aStr[i]-'0'))
 	}
-
-	for ; m > 0; m-- {
-		fmt.Println("请输入操作 M a b 或者 Q a b")
-		input, _ := reader.ReadString('\n')
-		inputArr := strings.Split(strings.TrimSpace(input), " ")
-		op := strings.TrimSpace(inputArr[0])
-		a, _ := strconv.Atoi(strings.TrimSpace(inputArr[1]))
-		b, _ := strconv.Atoi(strings.TrimSpace(inputArr[2]))
-		if op == "M" {
-			f[find(a)] = find(b)
-		} else {
-			if find(a) == find(b) {
-				fmt.Println("Yes")
-			} else {
-				fmt.Println("No")
-			}
-		}
+	res := div(a, b)
+	for i := len(res) - 1; i >= 0; i-- {
+		fmt.Printf("%d", res[i])
 	}
 }
 
-func find(x int) int {
-	if f[x] != x {
-		f[x] = find(f[x])
+func div(a []int, b int) []int {
+	res, t := []int{}, 0
+	for i := len(a) - 1; i >= 0; i-- {
+		t = t*10 + a[i]
+		res = append([]int{t / b}, res...)
+		t = t % b
 	}
-	return f[x]
+	for len(res) > 1 && res[len(res)-1] == 0 {
+		res = res[:len(res)-1]
+	}
+	return res
+}
+
+func mul(a []int, b int) []int {
+	res, t := []int{}, 0
+	for i := 0; i < len(a) || t > 0; i++ {
+		if i < len(a) {
+			t += a[i] * b
+		}
+		res = append(res, t%10)
+		t = t / 10
+	}
+	for len(res) > 1 && res[len(res)-1] == 0 {
+		res = res[:len(res)-1]
+	}
+	return res
+}
+
+func sub(a, b []int) []int {
+	res, t := []int{}, 0
+	for i := 0; i < len(a); i++ {
+		if i < len(b) {
+			t = a[i] - b[i] - t
+		} else {
+			t = a[i] - t
+		}
+		res = append(res, ((t + 10) % 10))
+		if t < 0 {
+			t = 1
+		} else {
+			t = 0
+		}
+	}
+	for len(res) > 1 && res[len(res)-1] == 0 {
+		res = res[:len(res)-1]
+	}
+	return res
+}
+
+func isMoreThan(a, b []int) int {
+	if len(a) == len(b) {
+		for i := 0; i < len(a); i++ {
+			if a[i] == b[i] {
+				continue
+			}
+			if a[i] > b[i] {
+				return 1
+			} else {
+				return 2
+			}
+		}
+		return 3
+	}
+	if len(a) > len(b) {
+		return 1
+	} else {
+		return 2
+	}
+}
+
+func add(a, b []int) []int {
+	if len(a) < len(b) {
+		return add(b, a)
+	}
+	res, t := []int{}, 0
+	for i := 0; i < len(a); i++ {
+		if i >= len(b) {
+			t = a[i]
+		} else {
+			t = a[i] + b[i]
+		}
+
+		res = append(res, t%10)
+		t = t / 10
+	}
+	if t != 0 {
+		res = append(res, t)
+	}
+	return res
 }
